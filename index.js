@@ -1,6 +1,7 @@
 
 const express = require('express'); //Obtener la libreria
 const app = express(); //Asignar la libreria a app
+const {pokemon} = require('./pokedex.json'); //Importar la base de datos y extraer el elmento especifico
 
 /** 
  * Verbos HTTP
@@ -15,11 +16,58 @@ const app = express(); //Asignar la libreria a app
 app.get("/", (req, res, next) =>
 {
     res.status(200);
-    res.send("Bienvenido");
+    res.send("Bienvenido al pokedex");
+});
+
+app.get("/pokemon/all", (req, res, next) =>
+{
+    res.status(200);
+    res.send(pokemon);   
+});
+
+app.get('/pokemon/:id([0-9]{1,3})', (req, res, next) =>
+{
+    const id = req.params.id - 1;
+
+    if(id >= 0 || id <= 150)
+    {
+        res.status(200);
+        res.send(pokemon[req.params.id-1]); 
+        
+    }else
+    {
+        res.status(404);
+        res.send("El pokemon no ha sido encontrado");
+    }
+
+});
+
+app.get('/pokemon/:name' , (req, res, next) =>
+{
+    const name = req.params.name;
+
+    for(i = 0; i < pokemon.length; i++)
+    {
+        if(pokemon[i].name == name.trim())
+        {
+            res.status(200);
+            res.send(pokemon[i]);
+        }
+    }
+
+    res.status(404);
+    res.send("Pokemon no encontrado");
+    
+});
+
+app.get('/pokemon/:num', (req, res, next) =>
+{
+    res.status(200);
+    res.send(pokemon[req.params.num]);
 });
 
 //Encender el servidor para que escuche
-app.listen(3000, () =>
+app.listen(process.env.PORT || 3000, () =>
 {
     console.log("Server is running...");
 });
