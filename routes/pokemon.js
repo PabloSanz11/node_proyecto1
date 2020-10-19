@@ -14,20 +14,21 @@ pokemon.post("/", (req, res, next) =>
 pokemon.get("/", async (req, res, next) =>
 {
     const pkmn =  await db.query("SELECT * FROM pokemon"); //Es el query
-    return res.status(200).json(pkmn); //Solo cuando ya viene en formato json 
+    return res.status(200).json({code: 1, message: pkmn}); //Solo cuando ya viene en formato json 
 });
 
+//Busqueda por IDs
 pokemon.get('/:id([0-9]{1,3})', async (req, res, next) =>
 {
     const id = req.params.id;
-    const pkmn =  await db.query("SELECT * FROM pokemon WHERE pok_id ="+ id); //Es el query
-
-    if(id >= 0 && id <= 150)
+    
+    if(id >= 1 && id <= 722)
     {
-       return res.status(200).json(pkmn);
+       const pkmn =  await db.query("SELECT * FROM pokemon WHERE pok_id ="+ id); //Es el query
+       return res.status(200).json({code: 1, message: pkmn});
     }  
     
-    return res.status(404).send("El pokemon no ha sido encontrado");
+    return res.status(404).send({code: 404, message: "El pokemon no ha sido encontrado"});
     //(id >= 0 || id <= 150) ? res.status(200).send(pk[req.params.id-1]) : res.status(404).send("El pokemon no ha sido encontrado");
 
 });
@@ -42,10 +43,10 @@ pokemon.get('/:name([A-Za-z]+)', async (req, res, next) =>
     {
         if(pkmn.length > 0)
         {
-            return res.status(200).json(pkmn);
+            return res.status(200).json({code: 1, message: pkmn});
         }
 
-        return res.status(404).send("Pokemon no encontrado");
+        return res.status(404).send({code: 404, message: "El pokemon no ha sido encontrado"});
     } catch (error) {
         console.log(error);
     }
