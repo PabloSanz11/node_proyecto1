@@ -1,9 +1,14 @@
-//const bodyParser = require('body-parser');
+//Dependencias
 const morgan = require('morgan');
 const express = require('express'); //Obtener la libreria
 const app = express(); //Asignar la libreria a app
+//Routers
 const pokemon = require('./routes/pokemon'); //Asignar el recurso
 const user = require('./routes/user');
+//Middleware
+const auth = require('./middleware/auth');
+const notFound = require('./middleware/notFound');
+const index = require('./middleware/index');
 
 app.use(morgan('dev'));
 app.use(express.json());
@@ -14,19 +19,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));*/
 
 //req es la petición del cliente navegador, res es la respuesta que nosotros mandaremos
-app.get("/", (req, res, next) =>
-{
-    return res.status(200).json({code: 1, message: "Bienvenido al Pokédex"});
-});
-
-app.use("/pokemon", pokemon); // cada que se detecte al pokemon se manda al js, es acceder a los recursos
+app.get("/",index);
 app.use("/user", user);
+app.use(auth);
+app.use("/pokemon", pokemon); // cada que se detecte al pokemon se manda al js, es acceder a los recursos
 
 // Cuando se entre a algun recurso inexistentes, <--------------------- siempre se pone al final --------------------->
-app.use((req, res, next) =>
-{
-    return res.status(404).json({code: 404, message: "URL NO ENCONTRADA"});
-});
+app.use(notFound);
 
 //Encender el servidor para que escuche
 app.listen(process.env.PORT || 3000, () =>
