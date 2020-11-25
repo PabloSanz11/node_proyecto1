@@ -21,10 +21,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));*/
 
 //req es la petición del cliente navegador, res es la respuesta que nosotros mandaremos
-app.get("/", (req,res,next) =>
-{
-    res.status(200).send("hola mundo");
-});
+app.get("/",index);
 app.use("/user", user);
 app.use(auth);
 app.use("/pokemon", pokemon); // cada que se detecte al pokemon se manda al js, es acceder a los recursos
